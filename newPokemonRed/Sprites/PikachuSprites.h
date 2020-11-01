@@ -1,6 +1,6 @@
 /*
 
- TRAINER.H
+ PIKACHUSPRITES.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : None.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 37
+  Tiles                : 0 to 11
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -24,8 +24,8 @@
 
 
 /* Bank of tiles. */
-#define trainerTilesBank 0
+#define PikachuSpritesBank 0
 /* Start of tile array. */
-extern unsigned char trainerTiles[];
+extern unsigned char PikachuSprites[];
 
-/* End of TRAINER.H */
+/* End of PIKACHUSPRITES.H */
