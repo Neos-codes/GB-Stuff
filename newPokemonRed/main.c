@@ -1,6 +1,7 @@
 #include <gb/gb.h>
 #include "Sprites/trainer.c"
 #include "Sprites/PikachuSprites.c"
+#include "Sprites/characters.c"
 #include "TileMaps/insideFloor.c"
 #include "Maps/testBKG.c"
 
@@ -18,9 +19,11 @@ void TrainerWalkingAnim(UINT8 dir);
 void CompanionWalkingAnim(UINT8 dir);
 void GetCompanionDir(UINT8 flag);   // flag = 0 se mueve en X, flag 1 en eje Y , flag = companionFlag
 void CompanionMove(UINT8 flag);
+void Redraw_Screen();
 
 GameObject trainer;
 GameObject companion;
+UINT8 frame = 0;                // Counts frames in game
 UINT8 flag = 0;             // bit 0: companionMove() flag
 UINT8 lastPosX, lastPosY;   // last trainer position (to calculate direction of companion)
 UINT8 trainerAnimFrame = 0; // Animation Frame of Trainer
@@ -28,18 +31,33 @@ UINT8 isMove = 0;           // Boolean that indicates if Trainer is moving
 UINT8 trainerDir = 2, trainerLastDir = 2;   // direction of trainer movement
 UINT8 hasCompanion = 1, companionFlip = 0, CompanionDir, companionAnimFrame = 0;
 
+UINT8 vbl_count = 0;
+
+void vbl_update(){
+    vbl_count++;
+}
 
 void main(){
 
     LoadData_Trainer();
     LoadData_Companion();
     LoadData_TestBKG();
-    //set_sprite_tile(39, 38);   // For Debug
+
+    // Para fluidez
+    disable_interrupts();
+    add_VBL(vbl_update);
+    set_interrupts(VBL_IFLAG);
+    enable_interrupts();
 
     SHOW_SPRITES;
     SHOW_BKG;
 
     while(1){
+        
+        if(!vbl_count)
+            wait_vbl_done();
+        vbl_count = 0;
+
         if(!Input()){
 
         }
@@ -50,6 +68,8 @@ void main(){
 
 }
 
+
+// Trainer and Companion Foos
 void LoadData_Trainer(){
     // Load Data
     set_sprite_data(0, 38, trainerTiles);
@@ -145,10 +165,10 @@ UINT8 Input(){
 
 void scrollBKG(UINT8 x, UINT8 y, UINT8 dir, UINT8 companionFlag){
     UINT8 steps = 0;
-    //companionLastDir = CompanionDir;    // Se guarda la direccion anterior antes de obtener la nueva
     GetCompanionDir(companionFlag);
     while(steps < 16){
-        CompanionMove(!(steps%4));
+        Redraw_Screen();
+        CompanionMove(!(steps & 0x3));  // !(steps % 4)
         if(steps == 0 || steps == 7){   // Para mezclar animaciones de trainer y companion
             TrainerWalkingAnim(dir);    // separar cada step en un if
             if(hasCompanion){
@@ -160,17 +180,7 @@ void scrollBKG(UINT8 x, UINT8 y, UINT8 dir, UINT8 companionFlag){
         }
         scroll_bkg(x, y);
         steps++;
-        wait_vbl_done();
     }
-    /*if(flag){
-        steps = 0;
-        flag = 0;
-        while(steps < 4){
-            CompanionMove();
-            steps++;
-            wait_vbl_done();
-        }
-    }*/
 }
 
 void TrainerWalkingAnim(UINT8 dir){
@@ -432,6 +442,15 @@ void GetCompanionDir(UINT8 flag){
     }
 }
 
+void Redraw_Screen(){
+    wait_vbl_done();
+    frame++;
+    if(frame > 64){
+        frame = 0;
+    }
+}
+
+// Esto ocupa harta CPU
 void CompanionMove(UINT8 flag){
     if(trainerLastDir != trainerDir){
         if((trainerLastDir == 3 && trainerDir == 1) || (trainerLastDir == 2 && trainerDir == 4)){
@@ -520,3 +539,6 @@ void CompanionMove(UINT8 flag){
         }
     }
 }
+
+// Characters Foos
+
