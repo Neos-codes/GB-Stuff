@@ -2,6 +2,7 @@
 #include "Sprites/slime.c"
 
 UINT8 vbl_count = 0;
+UINT8 state = 0;
 
 void vbl_update(){
     vbl_count++;
@@ -10,7 +11,7 @@ void vbl_update(){
 void main(){
 
     // Set sprites
-    set_sprite_data(0, 4, slime);
+    set_sprite_data(0, 5, slime);
     set_sprite_tile(0, 0);
     set_sprite_tile(1, 1);
     set_sprite_tile(2, 2);
@@ -19,6 +20,8 @@ void main(){
     move_sprite(1, 80, 82);
     move_sprite(2, 88, 82);
     move_sprite(3, 88, 90);
+
+
 
     // Para fluidez
     disable_interrupts();
@@ -34,6 +37,16 @@ void main(){
             wait_vbl_done();
         vbl_count = 0;
 
+        if(state){
+            set_sprite_tile(3, 4);
+            state = !state;
+            delay(1000);
+        }
+        else{
+            set_sprite_tile(3, 3);
+            state = !state;
+            delay(1000);
+        }
 
     }
 
