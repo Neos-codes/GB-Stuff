@@ -23,7 +23,7 @@ void Redraw_Screen();
 
 GameObject trainer;
 GameObject companion;
-UINT8 frame = 0;                // Counts frames in game
+UINT8 frame = 0;            // Counts frames in game
 UINT8 flag = 0;             // bit 0: companionMove() flag
 UINT8 lastPosX, lastPosY;   // last trainer position (to calculate direction of companion)
 UINT8 trainerAnimFrame = 0; // Animation Frame of Trainer
@@ -85,7 +85,7 @@ void LoadData_Trainer(){
     move_sprite(2, 72, 88);
     move_sprite(3, 80, 88);
     // Set (x,y) coordinates
-    trainer.x = 9;
+    trainer.x = 9;    // This must variate in every map
     trainer.y = 8;
 
 }
@@ -450,7 +450,6 @@ void Redraw_Screen(){
     }
 }
 
-// Esto ocupa harta CPU
 void CompanionMove(UINT8 flag){
     if(trainerLastDir != trainerDir){
         if((trainerLastDir == 3 && trainerDir == 1) || (trainerLastDir == 2 && trainerDir == 4)){
